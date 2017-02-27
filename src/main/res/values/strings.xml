@@ -81,4 +81,8 @@
 	<string name="create_folder_error_already_exists">Failed to create folder: folder already exists.</string>
 	<string name="create_folder_success">Created folder successfully.</string>
 	<string name="location_select_manual">Manually select storage location</string>
+	<string name="storage_dialog_title">Warning!</string>
+	<string name="storage_dialog_message">You have no external storage, this would make your records not readable!</string>
+	<string name="folder_not_empty">Folder not empty</string>
+	<string name="folder_not_empty_msg">Folder is not empty.\nAre you sure you want to use this folder?</string>
 </resources>

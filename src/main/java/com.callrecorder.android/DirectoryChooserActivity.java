@@ -134,8 +134,8 @@ public class DirectoryChooserActivity extends Activity {
 
 	private void showNonEmptyDirectoryWarning() {
 		new AlertDialog.Builder(DirectoryChooserActivity.this)
-			.setTitle("Folder not empty")
-			.setMessage("Folder is not empty.\nAre you sure you want to use this folder?")
+			.setTitle(R.string.folder_not_empty)
+			.setMessage(R.string.folder_not_empty_msg)
 			.setNegativeButton(R.string.cancel, (dialog, i) -> {
 				dialog.dismiss();
 			})
