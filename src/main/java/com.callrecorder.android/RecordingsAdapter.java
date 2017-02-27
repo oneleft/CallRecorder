@@ -17,22 +17,24 @@
  */
 package com.callrecorder.android;
 
-import java.text.DateFormat;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.provider.DocumentFile;
 import android.telephony.PhoneNumberUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.util.List;
 
 class RecordingsAdapter extends ArrayAdapter<Recording> {
 
@@ -59,7 +61,8 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 			R.id.recording_date);
 		final TextView numberView = (TextView) rowView.findViewById(
 			R.id.recording_number);
-		Recording entry = list.get(position);
+		final Recording entry = list.get(position);
+		FileHelper.logD(Constants.TAG, "pos:"+position+"titleView:"+titleView.hashCode()+",text:"+titleView.getText()+"|entry:"+entry);
 
 		String phoneNumber = entry.getPhoneNumber();
 		if (phoneNumber.matches("^[\\d]+$")) {
@@ -70,8 +73,27 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 		}
 
 		dateView.setText(DateFormat.getDateTimeInstance().format(entry.getDate()));
-		titleView.setText(entry.getUserName());
+		titleView.setText("");	// @NOTE titleView was reused by the scrollview when scroll to next page !!
 		numberView.setText(phoneNumber);
+
+		// query contact
+		if (entry.getUserName() != null && entry.getUserName() == "") {
+			new AsyncTask<Void, Void, String>() {
+				@Override
+				protected String doInBackground(Void... params) {
+					return FileHelper.getContactName(entry.getPhoneNumber(), context);
+				}
+
+				@Override
+				protected void onPostExecute(String str) {
+					FileHelper.logD(Constants.TAG, "got user name:"+str+"|titleview:"+titleView.hashCode()+"|entry:"+entry);
+					entry.setUserName(str);
+					titleView.setText(str);
+				}
+			}.execute();
+		} else if (entry.getUserName() != null) {
+			titleView.setText(entry.getUserName());
+		}
 
 		return rowView;
 	}
@@ -134,6 +156,9 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 			.findFile(fileName);
 		Uri uri = FileHelper.getContentUri(context, file.getUri());
 
+		// get the real path or the 3rd app would not find the file
+		uri = Uri.parse("file://"+ SAFHelper.getPath(context, file.getUri()));
+
 		Intent sendIntent = new Intent(Intent.ACTION_SEND)
 			.putExtra(Intent.EXTRA_SUBJECT,
 				context.getString(R.string.mail_subject))
@@ -149,14 +174,19 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 	}
 
 	private void startPlayExternal(String fileName) {
+		Log.d("file", fileName);
 		DocumentFile file = FileHelper.getStorageFile(context)
 			.findFile(fileName);
+		Log.d("file", file.getName()+"||"+file.getUri()+"||"+file.getParentFile().getName()+"||"+file.exists());
 		Uri uri = FileHelper.getContentUri(context, file.getUri());
+
+		// get the real path or the 3rd app would not find the file
+		uri = Uri.parse("file://"+ SAFHelper.getPath(context, file.getUri()));
 
 		context.startActivity(new Intent()
 			.setAction(Intent.ACTION_VIEW)
-			.setData(uri)
+			.setDataAndType(uri, "audio/3gpp")
 			.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-			.setType("audio/3gpp"));
+			);
 	}
 }

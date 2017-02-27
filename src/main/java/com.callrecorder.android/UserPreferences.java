@@ -1,11 +1,15 @@
 package com.callrecorder.android;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+
+import java.io.File;
 
 class UserPreferences {
 	private static Context context = null;
@@ -16,7 +20,28 @@ class UserPreferences {
 		context = ctx;
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		default_storage = Uri.fromFile(context.getFilesDir());
+
+		if (default_storage == null) {
+			makeDefaultStoragePath(ctx);
+		}
+	}
+
+	private static void makeDefaultStoragePath(Context context) {
+		if (SDCardUtils.isMounted()) {
+			File storage = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Constants.DefaultDir);
+			SDCardUtils.ensureDirExists(storage);
+			default_storage = Uri.fromFile(storage);
+		} else {
+			default_storage = Uri.fromFile(context.getFilesDir());
+			new AlertDialog.Builder(context)
+					.setTitle(R.string.storage_dialog_title)
+					.setMessage(R.string.storage_dialog_message)
+					.setPositiveButton(R.string.confirm, (dialog, i) -> {
+						dialog.dismiss();
+					})
+					.create()
+					.show();
+		}
 	}
 
 	private static void setString(String key, String value) {

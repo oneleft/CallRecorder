@@ -18,7 +18,8 @@
 package com.callrecorder.android;
 
 class Constants {
-	public static final String TAG = "Call recorder";
+	public static final String TAG = "CallRecorder";
+	public static final String DefaultDir = "callrecords";
 
 	public static final String FILE_NAME_PATTERN = "^[\\d]{14}_[_\\d]*\\..+$";
 

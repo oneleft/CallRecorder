@@ -24,9 +24,17 @@
 		<TextView android:id="@+id/recording_number"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentEnd="true"
-				android:layout_alignParentRight="true"
+				android:layout_toLeftOf="@+id/scroll_space"
 				android:textSize="15sp"
 				tools:text="Number"/>
+		<View
+			android:id="@+id/scroll_space"
+			android:layout_width="15dp"
+			android:layout_height="5dp"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"/>
 	</RelativeLayout>
+	<View
+		android:layout_width="5dp"
+		android:layout_height="5dp"/>
 </LinearLayout>

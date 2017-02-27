@@ -17,11 +17,6 @@
  */
 package com.callrecorder.android;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -31,13 +26,25 @@ import android.os.Build;
 import android.os.StatFs;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.v4.provider.DocumentFile;
 import android.support.v4.content.FileProvider;
+import android.support.v4.provider.DocumentFile;
 import android.telephony.PhoneNumberUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 class FileHelper {
+	private static final boolean DEBUG = true;
+	public static void logD(String tag, String msg) {
+		if (DEBUG) {
+			Log.d(tag, msg);
+		}
+	}
+
 	/** Returns a file descriptor for a new recording file in write mode.
 	 *
 	 * @throws Exception
@@ -59,7 +66,7 @@ class FileHelper {
 	}
 
 	/// Obtains a contact name coresponding to a phone number.
-	private static String getContactName(String phoneNum, Context context) {
+	public static String getContactName(String phoneNum, Context context) {
 		@SuppressWarnings("deprecation")
 		String res = PhoneNumberUtils.formatNumber(phoneNum);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -104,10 +111,22 @@ class FileHelper {
 	public static List<Recording> listRecordings(Context context) {
 		final DocumentFile directory = getStorageFile(context);
 
-		DocumentFile[] files = directory.listFiles();
+		logD(Constants.TAG, "listing files");
+
+		File dir = new File(SAFHelper.getPath(context, directory.getUri()));
+		if (dir == null || dir.isDirectory() == false) {
+			return new ArrayList<>();
+		}
+
+		File[] files = dir.listFiles();
 		List<Recording> fileList = new ArrayList<>();
-		for (DocumentFile file : files) {
-			if (!file.getName().matches(Constants.FILE_NAME_PATTERN)) {
+
+		logD(Constants.TAG, "loop files for size:" + files.length);
+		for (File file : files) {
+			if (file.isDirectory()) {
+				continue;
+			}
+			if (! getFileExt(file.getName()).equalsIgnoreCase(".3gpp")) {
 				Log.d(Constants.TAG, String.format(
 					"'%s' didn't match the file name pattern",
 					file.getName()));
@@ -116,11 +135,18 @@ class FileHelper {
 
 			Recording recording = new Recording(file.getName());
 			String phoneNum = recording.getPhoneNumber();
-			recording.setUserName(getContactName(phoneNum, context));
+			//recording.setUserName(getContactName(phoneNum, context));
 			fileList.add(recording);
 		}
+		logD(Constants.TAG, "listing files end");
+
 
 		return fileList;
+	}
+
+	public static String getFileExt(String fileName) {
+		final int pos = fileName.lastIndexOf(".");
+		return pos == -1 ? "" : fileName.toLowerCase().substring(pos);
 	}
 
 	/// Get the number of free bytes that are available on the external storage.
@@ -158,6 +184,7 @@ class FileHelper {
 
 	public static DocumentFile getStorageFile(Context context) {
 		Uri uri = UserPreferences.getStorageUri();
+		Log.d("file", uri.getPath()+"||"+uri.getScheme()+"||"+uri);
 		String scheme = uri.getScheme();
 		if (scheme == null || scheme.equals("file")) {
 			return DocumentFile.fromFile(new File(uri.getPath()));
@@ -169,6 +196,7 @@ class FileHelper {
 	public static Uri getContentUri(Context context, Uri uri) {
 		if (uri.getScheme() == "content")
 			return uri;
+		// use FileProvider to access the external file!
 		return FileProvider.getUriForFile(context,
 				"com.callrecorder.android.fileprovider",
 				new File(uri.getPath()));

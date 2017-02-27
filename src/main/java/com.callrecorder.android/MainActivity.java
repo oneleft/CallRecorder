@@ -23,9 +23,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -33,7 +35,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -41,6 +46,54 @@ public class MainActivity extends Activity {
 	private ScrollView noRecordingsView;
 	private ScrollView unusableView;
 	private TextView unusableText;
+
+	private MyAsyncTask myAsyncTask = null;
+
+	private static class MyAsyncTask extends AsyncTask<Void, Void, List<Recording>> {
+		// Avoid Memory Leak while using InnerClass
+		private WeakReference<MainActivity> activityWeakReference;
+
+		public MyAsyncTask(MainActivity activity) {
+			Log.d(Constants.TAG, "new myAsyncTask");
+			activityWeakReference = new WeakReference<>(activity);
+		}
+
+		@Override
+		protected List<Recording> doInBackground(Void... params) {
+			FileHelper.logD(Constants.TAG, "searching recording files");
+			MainActivity activity = activityWeakReference.get();
+			if (activity == null) {
+				return new ArrayList<>();
+			}
+			List<Recording> result = FileHelper.listRecordings(activity);
+			FileHelper.logD(Constants.TAG, "searching recording files end");
+
+			FileHelper.logD(Constants.TAG, "sorting recording files");
+			// Since Java 8 the List interface provides the sort method.
+			Collections.sort(result, new Comparator<Recording>() {
+				@Override
+				public int compare(Recording o1, Recording o2) {
+					return - o1.compareTo(o2);
+				}
+			});
+
+			FileHelper.logD(Constants.TAG, "sorting recording files end");
+			return result;
+		}
+
+		@Override
+		protected void onPostExecute(List<Recording> result) {
+			FileHelper.logD(Constants.TAG, "showing recording files");
+
+			MainActivity activity = activityWeakReference.get();
+			if (activity == null) {
+				return;
+			}
+			activity.updateRecordings(result);
+
+			FileHelper.logD(Constants.TAG, "showing recording files end");
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -106,8 +159,13 @@ public class MainActivity extends Activity {
 			unusableText.setText(R.string.read_only_message);
 		}
 
-		final List<Recording> listDir = FileHelper.listRecordings(this);
+		// AsyncTask is disposable (only can execute once)
+		new MyAsyncTask(this).execute();
 
+		super.onResume();
+	}
+
+	private void updateRecordings(List<Recording> listDir) {
 		if (listDir == null || listDir.isEmpty()) {
 			noRecordingsView.setVisibility(TextView.VISIBLE);
 			recordingsView.setVisibility(ScrollView.GONE);
@@ -120,14 +178,13 @@ public class MainActivity extends Activity {
 		final RecordingsAdapter adapter = new RecordingsAdapter(this, listDir);
 
 		recordingsView.setOnItemClickListener((parent, view, position, id) ->
-			adapter.showContextMenu(listDir.get(position).getFileName(), position)
+				adapter.showContextMenu(listDir.get(position).getFileName(), position)
 		);
 
-		adapter.sort((arg0, arg1) -> -arg0.compareTo(arg1));
+		// sort in thread
+		// adapter.sort((arg0, arg1) -> -arg0.compareTo(arg1));
 
 		recordingsView.setAdapter(adapter);
-
-		super.onResume();
 	}
 
 	@Override

@@ -26,20 +26,21 @@ import java.util.Locale;
 
 class Recording implements Comparable<Recording> {
 	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-	private Date date;
+	private Date date = new Date();
 	private final String fileName;
-	private String userName;
+	private String userName = "";
 	private final String phoneNumber;
 
 	public Recording(String fileName) {
 		this.fileName = fileName;
-		String dateStr = fileName.substring(0, 14);
 
+		String dateStr = fileName.substring(0, 14);
 		try {
 			this.date = formatter.parse(dateStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+
 		phoneNumber = fileName.substring(15, fileName.indexOf('.'));
 	}
 
@@ -61,4 +62,10 @@ class Recording implements Comparable<Recording> {
 		return date.compareTo(other.date);
 	}
 
+	@Override
+	public String toString() {
+		return "Recording{" +
+				", userName='" + userName + '\'' +
+				'}';
+	}
 }
