@@ -77,8 +77,6 @@ public class SettingsActivity extends PreferenceActivity {
 
 		List<File> checkPaths = new ArrayList<>();
 
-		checkPaths.add(getFilesDir());
-
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			Collections.addAll(checkPaths, getExternalFilesDirs(null));
 		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
@@ -127,6 +125,7 @@ public class SettingsActivity extends PreferenceActivity {
 					dialog1.dismiss();
 					if (which == 0) {
 						openStorageLocationDirectoryChooser();
+						return;
 					}
 					File folder = folders.get(which - 1);
 					Log.d(Constants.TAG, "Data folder: " + folder.getAbsolutePath());
