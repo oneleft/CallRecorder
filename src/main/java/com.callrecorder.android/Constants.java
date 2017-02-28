@@ -28,4 +28,6 @@ class Constants {
 	public static final int STATE_CALL_END = 3;
 	public static final int RECORDING_ENABLED = 4;
 	public static final int RECORDING_DISABLED = 5;
+
+	public static final String DefaultNumber = "1111"; // must be a number
 }

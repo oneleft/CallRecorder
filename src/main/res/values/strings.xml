@@ -85,4 +85,5 @@
 	<string name="storage_dialog_message">You have no external storage, this would make your records not readable!</string>
 	<string name="folder_not_empty">Folder not empty</string>
 	<string name="folder_not_empty_msg">Folder is not empty.\nAre you sure you want to use this folder?</string>
+	<string name="can_not_get_phone_number">Can not get the phone number, make sure it has the permitions !</string>
 </resources>

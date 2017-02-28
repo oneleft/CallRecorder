@@ -33,15 +33,28 @@ public class PhoneReceiver extends BroadcastReceiver {
 			return;
 		}
 
-		UserPreferences.init(context);
 		String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
 		String extraState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-		Log.d(Constants.TAG, "PhoneReceiver phone number: " + phoneNumber);
+		Log.d(Constants.TAG, "PhoneReceiver phone number: " + phoneNumber + ", extraState: " + extraState);
 
-		if (!FileHelper.isStorageWritable(context))
+//		电话状态对应：
+//		RINGING ----对应来电时响起铃声
+//		OFFHOOK ----如果是来电，则是来电接通到挂断之前，如果是拨出，则是点击拨打电话那一刻(还未接通)，直到挂断
+//		IDLE    ----对应挂断电话，即没有任何的电话事件了
+//
+//		电话号码：
+//		仅且一次，Intent.EXTRA_PHONE_NUMBER的非null值。
+//
+//		特别说明：如果你在打电话过程中(状态为 OFFHOOK)，此时如果有人再给你打电话，就会想起铃声，这时候的状态会变化为 RINGING，如果你挂断该来电，继续之前的电话，状态又变为 OFFHOOK
+
+		UserPreferences.init(context);
+		if (!FileHelper.isStorageWritable(context)) {
+			Log.e(Constants.TAG, "Storage is not writable !");
 			return;
+		}
 
 		if (extraState != null) {
+			Log.d(Constants.TAG, "DispatchState: " + extraState);
 			dispatchExtra(context, intent, phoneNumber, extraState);
 		} else if (phoneNumber != null) {
 			context.startService(new Intent(context, RecordService.class)

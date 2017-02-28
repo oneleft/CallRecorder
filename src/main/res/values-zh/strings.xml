@@ -28,7 +28,7 @@
     <string name="notification_ticker">正在录音...</string>
     <string name="notification_title">通话中...</string>
     <string name="notification_text">录音已经开始，如果没有开始，可以在设置里开启，通话结束录音会自动停止</string>
-    <string name="record_impossible">此设备不能录音（请确认后台没有程序占用了麦克风）</string>
+    <string name="record_impossible">此设备不能录音，请确认开启了对应权限，且后台没有程序占用麦克风</string>
     <string name="read_only_message">存储空间是只读的.\n通话将不能被录音！</string>
 	<string name="about"><![CDATA[<h1>Call recorder %s</h1>
 	    \n\n
@@ -60,7 +60,7 @@
     <string name="delete_failed">删除录音失败！</string>
     <string name="menu_settings">设置</string>
     <string name="choose_storage_location">选择存储位置</string>
-    <string name="unreadable_message">存储路径不能访问</string>
+    <string name="unreadable_message">存储路径不能访问，请确认存储设备存在且开启了对应权限</string>
     <string name="preference_location_title">录音存储位置</string>
 	<string name="welcome_message"><![CDATA[<h3>欢迎使用通话录音！</h3>
 		<p>部分手机厂商会禁止程序对通话进行录音，此程序也无能为力了.</p>
@@ -81,4 +81,5 @@
     <string name="storage_dialog_message">当前设备没有外部存储设备，这将会导致录音文件无法被读取！请把录音存储位置修改为外部存储器。</string>
     <string name="folder_not_empty">文件夹不是空的</string>
     <string name="folder_not_empty_msg">文件夹不是空的，你确定使用该文件夹吗？</string>
+    <string name="can_not_get_phone_number">无法获取通话号码，请确认开启了对应权限</string>
 </resources>

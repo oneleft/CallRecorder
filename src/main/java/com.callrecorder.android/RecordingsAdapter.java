@@ -77,7 +77,9 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 		numberView.setText(phoneNumber);
 
 		// query contact
-		if (entry.getUserName() != null && entry.getUserName() == "") {
+		if (entry.getUserName() != null && entry.getUserName() != "") {
+			titleView.setText(entry.getUserName());
+		} else if (entry.getUserName() != null && entry.getUserName() == "") {
 			new AsyncTask<Void, Void, String>() {
 				@Override
 				protected String doInBackground(Void... params) {
@@ -91,8 +93,6 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 					titleView.setText(str);
 				}
 			}.execute();
-		} else if (entry.getUserName() != null) {
-			titleView.setText(entry.getUserName());
 		}
 
 		return rowView;
@@ -178,10 +178,10 @@ class RecordingsAdapter extends ArrayAdapter<Recording> {
 		DocumentFile file = FileHelper.getStorageFile(context)
 			.findFile(fileName);
 		Log.d("file", file.getName()+"||"+file.getUri()+"||"+file.getParentFile().getName()+"||"+file.exists());
-		Uri uri = FileHelper.getContentUri(context, file.getUri());
+		//Uri uri = FileHelper.getContentUri(context, file.getUri());
 
 		// get the real path or the 3rd app would not find the file
-		uri = Uri.parse("file://"+ SAFHelper.getPath(context, file.getUri()));
+		Uri uri = Uri.parse("file://"+ SAFHelper.getPath(context, file.getUri()));
 
 		context.startActivity(new Intent()
 			.setAction(Intent.ACTION_VIEW)

@@ -72,7 +72,7 @@ class UserPreferences {
 	}
 
 	public static boolean getEnabled() {
-		return prefs.getBoolean("enabled", false);
+		return prefs.getBoolean("enabled", true);	// Default is Enabled !
 	}
 
 	public static void setEnabled(boolean enabled) {

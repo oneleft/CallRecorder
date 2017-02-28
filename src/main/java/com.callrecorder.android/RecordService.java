@@ -17,23 +17,58 @@
  */
 package com.callrecorder.android;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.callrecorder.android.Toast.ToastCompat;
 
 public class RecordService extends Service {
 	private MediaRecorder recorder;
 	private String phoneNumber;
 
 	private DocumentFile file;
+	private ParcelFileDescriptor fd;
+
+	private static class RecordConfig {
+		public int audioSource = MediaRecorder.AudioSource.DEFAULT;
+		public int outputFormat = MediaRecorder.OutputFormat.DEFAULT;
+		public int audioEncoder = MediaRecorder.AudioEncoder.DEFAULT;
+		public RecordConfig(){}
+		public RecordConfig(int audioSource, int outputFormat, int audioEncoder) {
+			this.audioSource = audioSource;
+			this.outputFormat = outputFormat;
+			this.audioEncoder = audioEncoder;
+		}
+		@Override
+		public String toString() {
+			return "RecordConfig{" +
+					"audioSource=" + audioSource +
+					", outputFormat=" + outputFormat +
+					", audioEncoder=" + audioEncoder +
+					'}';
+		}
+	}
+	private RecordConfig[] configs = {
+			new RecordConfig(MediaRecorder.AudioSource.DEFAULT, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
+
+			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
+			new RecordConfig(MediaRecorder.AudioSource.MIC, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
+			new RecordConfig(MediaRecorder.AudioSource.VOICE_UPLINK, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT), // 只录对方
+
+			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.THREE_GPP, MediaRecorder.AudioEncoder.DEFAULT),
+			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.AMR_NB),
+			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.THREE_GPP, MediaRecorder.AudioEncoder.AMR_NB),
+
+			new RecordConfig(MediaRecorder.AudioSource.MIC, MediaRecorder.OutputFormat.THREE_GPP, MediaRecorder.AudioEncoder.DEFAULT),
+			new RecordConfig(MediaRecorder.AudioSource.MIC, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.AMR_NB),
+			new RecordConfig(MediaRecorder.AudioSource.MIC, MediaRecorder.OutputFormat.THREE_GPP, MediaRecorder.AudioEncoder.AMR_NB)
+	};
 	private boolean onCall = false;
 	private boolean recording = false;
 	private boolean onForeground = false;
@@ -61,10 +96,12 @@ public class RecordService extends Service {
 		switch (commandType) {
 		case Constants.RECORDING_ENABLED:
 			Log.d(Constants.TAG, "RecordService RECORDING_ENABLED");
-			if (enabled && phoneNumber != null && onCall && !recording) {
+			if (enabled && onCall && !recording) {
 				Log.d(Constants.TAG, "RecordService STATE_START_RECORDING");
-				startService();
+				showNotification();
 				startRecording();
+			} else {
+				Log.d(Constants.TAG, "Not Recording Enabled");
 			}
 			break;
 		case Constants.RECORDING_DISABLED:
@@ -77,7 +114,7 @@ public class RecordService extends Service {
 			break;
 		case Constants.STATE_INCOMING_NUMBER:
 			Log.d(Constants.TAG, "RecordService STATE_INCOMING_NUMBER");
-			startService();
+			//showNotification();
 			if (phoneNumber == null)
 				phoneNumber = intent.getStringExtra("phoneNumber");
 			break;
@@ -85,13 +122,24 @@ public class RecordService extends Service {
 			Log.d(Constants.TAG, "RecordService STATE_CALL_START");
 			onCall = true;
 
-			if (enabled && phoneNumber != null && !recording) {
-				startService();
+			Log.d(Constants.TAG, "enabled: " + enabled + ", phoneNumber: " +phoneNumber+", recordingObject: "+recorder);
+			if (enabled && !recording) {
+				showNotification();
 				startRecording();
+			} else {
+				Log.d(Constants.TAG, "Not Recording, Maybe is not enabled, Maybe is recording, Mabye phoneNumber is null");
 			}
 			break;
 		case Constants.STATE_CALL_END:
 			Log.d(Constants.TAG, "RecordService STATE_CALL_END");
+			if (file != null && recording) {
+				if (phoneNumber != null) {
+					file.renameTo(file.getName().replace(Constants.DefaultNumber, phoneNumber));
+					Log.d(Constants.TAG, "Rename the recording file to:"+file.getName());
+				} else {
+					ToastCompat.makeText(this, this.getString(R.string.can_not_get_phone_number), Toast.LENGTH_LONG).show();
+				}
+			}
 			onCall = false;
 			phoneNumber = null;
 			stopAndReleaseRecorder();
@@ -135,6 +183,7 @@ public class RecordService extends Service {
 	private void stopAndReleaseRecorder() {
 		if (recorder == null)
 			return;
+
 		Log.d(Constants.TAG, "RecordService stopAndReleaseRecorder");
 		boolean recorderStopped = false;
 		boolean exception = false;
@@ -153,66 +202,95 @@ public class RecordService extends Service {
 			deleteFile();
 		}
 		if (recorderStopped) {
-			Toast.makeText(this, this.getString(R.string.receiver_end_call),
-					Toast.LENGTH_SHORT)
-				.show();
+			ToastCompat.makeText(this, this.getString(R.string.receiver_end_call), Toast.LENGTH_SHORT).show();
 		}
 	}
 
 	private void startRecording() {
 		Log.d(Constants.TAG, "RecordService startRecording");
-		recorder = new MediaRecorder();
 
 		try {
-			recorder.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL);
-			recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+			// Cause phone number maybe comes after recording, so rename file after recording.
+			if (phoneNumber == null) {
+				file = FileHelper.getFile(this, Constants.DefaultNumber);
+			} else {
+				file = FileHelper.getFile(this, phoneNumber);
+			}
+			Log.d(Constants.TAG, "Recording file:" + file.getName());
 
-			file = FileHelper.getFile(this, phoneNumber);
-			ParcelFileDescriptor fd = getContentResolver()
-				.openFileDescriptor(file.getUri(), "w");
+			fd = getContentResolver()
+					.openFileDescriptor(file.getUri(), "w");
 			if (fd == null)
 				throw new Exception("Failed open recording file.");
+		} catch (Exception e) {
+			Log.e(Constants.TAG, "Failed to set up recorder.", e);
+		}
+
+		// loop to get the correct config
+		boolean bl = false;
+		for (RecordConfig config : configs) {
+			Log.d(Constants.TAG, "try config: "+config.toString());
+			if (bl = startRecorder(config)) {
+				break;
+			}
+		}
+
+		if (bl == false) {
+			Log.e(Constants.TAG, "Failed to set up recorder.");
+			ToastCompat.makeText(this, this.getString(R.string.record_impossible), Toast.LENGTH_LONG).show();
+			terminateAndEraseFile();
+			return;
+		}
+
+		recorder.setOnErrorListener((mr, what, extra) -> {
+			Log.e(Constants.TAG, "OnErrorListener " + what + "," + extra);
+			terminateAndEraseFile();
+		});
+
+		recorder.setOnInfoListener((mr, what, extra) -> {
+			Log.e(Constants.TAG, "OnInfoListener " + what + "," + extra);
+			terminateAndEraseFile();
+		});
+
+		recording = true;
+
+		Log.d(Constants.TAG, "RecordService: Recorder started! recording...");
+
+		// 小米手机Toast
+		ToastCompat.makeText(this, this.getString(R.string.receiver_start_call), Toast.LENGTH_SHORT).show();
+	}
+
+	private boolean startRecorder(RecordConfig config) {
+		try {
+			recorder = new MediaRecorder();
+
+			recorder.setAudioSource(config.audioSource);
+			recorder.setOutputFormat(config.outputFormat);
+			recorder.setAudioEncoder(config.audioEncoder);
+
 			recorder.setOutputFile(fd.getFileDescriptor());
 
-			recorder.setOnErrorListener((mr, what, extra) -> {
-				Log.e(Constants.TAG, "OnErrorListener " + what + "," + extra);
-				terminateAndEraseFile();
-			});
-
-			recorder.setOnInfoListener((mr, what, extra) -> {
-				Log.e(Constants.TAG, "OnInfoListener " + what + "," + extra);
-				terminateAndEraseFile();
-			});
-
+			// You have to setup output file before prepare!
 			recorder.prepare();
 
 			// Sometimes the recorder takes a while to start up
-			Thread.sleep(2000);
-
+			Thread.sleep(500);
 			recorder.start();
-			recording = true;
 
-			Log.d(Constants.TAG, "RecordService: Recorder started!");
-			Toast toast = Toast.makeText(this,
-				this.getString(R.string.receiver_start_call),
-				Toast.LENGTH_SHORT);
-			toast.show();
+			Log.d(Constants.TAG, "CurrentConfig: audioSource="+config.audioSource+", outputFormat="+config.outputFormat+", audioEncoder="+config.audioEncoder);
+			return true;
 		} catch (Exception e) {
-			Log.e(Constants.TAG, "Failed to set up recorder.", e);
-			terminateAndEraseFile();
-			Toast toast = Toast.makeText(this,
-				this.getString(R.string.record_impossible),
-				Toast.LENGTH_LONG);
-			toast.show();
+			Log.e(Constants.TAG, "Exception", e);
+			return false;
 		}
 	}
 
-	private void startService() {
+	private void showNotification() {
 		if (onForeground)
 			return;
 
-		Log.d(Constants.TAG, "RecordService startService");
+		/*
+		Log.d(Constants.TAG, "RecordService showNotification");
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -228,9 +306,13 @@ public class RecordService extends Service {
 			.setOngoing(true)
 			.build();
 
-		notification.flags = Notification.FLAG_NO_CLEAR;
+		notification.flags = Notification.FLAG_NO_CLEAR;	// notification you can not clear
 
-		startForeground(0, notification);
+		// Always to be 1 if set to 0 it would no notification.
+		startForeground(1, notification);
+
+		*/
+
 		onForeground = true;
 	}
 }
