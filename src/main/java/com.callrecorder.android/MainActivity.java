@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +38,8 @@ import android.widget.Toast;
 
 import com.callrecorder.android.entity.Constants;
 import com.callrecorder.android.entity.Recording;
+import com.callrecorder.android.module.update.UpdateHandler;
+import com.callrecorder.android.util.APPHelper;
 import com.callrecorder.android.util.FileHelper;
 import com.callrecorder.android.util.UserPreferences;
 import com.callrecorder.android.view.RecordingsAdapter;
@@ -54,6 +57,8 @@ public class MainActivity extends Activity {
 	private TextView unusableText;
 
 	private MyAsyncTask myAsyncTask = null;
+	private UpdateHandler mUpdateHandler;
+
 
 	private static class MyAsyncTask extends AsyncTask<Void, Void, List<Recording>> {
 		// Avoid Memory Leak while using InnerClass
@@ -101,11 +106,30 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	/* APP Init */
+
+	private void initAPP() {
+		UserPreferences.init(this);
+
+		APPHelper.gMainContext = this.getApplication();
+
+		Log.d(Constants.TAG, Looper.getMainLooper().toString());
+
+		mUpdateHandler = new UpdateHandler(this);
+		// first check update
+		if (UserPreferences.getAutoCheckUpdate()) {
+			mUpdateHandler.checkUpdateLater();
+		}
+	}
+
+	/* Activity HOOKs */
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		UserPreferences.init(this);
+
+		initAPP();
 
 		recordingsView = (ListView) findViewById(R.id.recording_list);
 		noRecordingsView = (ScrollView) findViewById(R.id.no_recordings_view);
@@ -236,6 +260,9 @@ public class MainActivity extends Activity {
 			break;
 		case R.id.menu_about:
 			startActivity(new Intent(this, AboutActivity.class));
+			break;
+		case R.id.menu_check_update:
+			mUpdateHandler.checkUpdate();
 			break;
 		case R.id.menu_delete_all:
 			new AlertDialog.Builder(this)

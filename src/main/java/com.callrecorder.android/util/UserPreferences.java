@@ -30,9 +30,13 @@ public class UserPreferences {
 		}
 	}
 
+	public static File getDefaultStoragePath() {
+		return new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+ Constants.DefaultDir);
+	}
+
 	private static void makeDefaultStoragePath(Context context) {
 		if (SDCardUtils.isMounted()) {
-			File storage = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+ Constants.DefaultDir);
+			File storage = getDefaultStoragePath();
 			SDCardUtils.ensureDirExists(storage);
 			default_storage = Uri.fromFile(storage);
 		} else {
@@ -94,5 +98,13 @@ public class UserPreferences {
 
 	public static void setWelcomeSeen() {
 		setBoolean("welcome_seen", true);
+	}
+
+	public static boolean getAutoCheckUpdate() {
+		return prefs.getBoolean("no_auto_check_update", true);
+	}
+
+	public static void setNoAutoCheckUpdate() {
+		setBoolean("no_auto_check_update", false);
 	}
 }

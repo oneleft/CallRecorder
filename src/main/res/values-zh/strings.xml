@@ -2,6 +2,7 @@
     tools:locale="en">
     <string name="app_name">通话录音</string>
     <string name="menu_about">关于</string>
+    <string name="menu_check_update">检查更新</string>
     <string name="menu_enable_record">启用自动录音</string>
     <string name="menu_disable_record">关闭自动录音</string>
     <string name="receiver_start_call">录音开始</string>
@@ -68,6 +69,7 @@
     <string name="welcome_title">欢迎！</string>
     <string name="confirm">确认</string>
     <string name="cancel">取消</string>
+    <string name="nomore">不再提醒</string>
     <string name="navigate_upwards">导航向上</string>
     <string name="selected_folder">选择文件夹</string>
     <string name="new_folder">新文件夹</string>
@@ -82,4 +84,13 @@
     <string name="folder_not_empty">文件夹不是空的</string>
     <string name="folder_not_empty_msg">文件夹不是空的，你确定使用该文件夹吗？</string>
     <string name="can_not_get_phone_number">无法获取通话号码，请确认开启了对应权限</string>
+
+    <string name="security_exception">操作错误，请确保开启了相应的权限！</string>
+
+    <string name="update_has_new_version">发现新版本</string>
+    <string name="update_checking">正在检查更新，请稍候&#8230;&#8230;&#8230;</string>
+    <string name="update_latest">当前已是最新版本</string>
+    <string name="update_error">检查更新异常</string>
+    <string name="update_title">版本更新</string>
+    <string name="update_message">发现新版本(%s)，是否现在更新？</string>
 </resources>

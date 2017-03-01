@@ -11,6 +11,10 @@
 		android:icon="@drawable/ic_about"
 		android:title="@string/menu_about"
 		android:showAsAction="ifRoom"/>
+	<item android:id="@+id/menu_check_update"
+		android:icon="@drawable/ic_check_update"
+		android:title="@string/menu_check_update"
+		android:showAsAction="ifRoom"/>
 	<item android:id="@+id/menu_delete_all"
 		android:icon="@drawable/ic_delete"
 		android:title="@string/menu_delete_all"

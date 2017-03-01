@@ -7,6 +7,7 @@
 	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 	<uses-permission android:name="android.permission.READ_CONTACTS"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.INTERNET" />
 	<!-- This is no longer necessary for accessing the app-specific external
 		file directories as of API 18, but it's needed to access the root of the
 		card for the directory chooser.  API 19 adds the Storage Access Framework,

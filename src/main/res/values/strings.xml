@@ -2,6 +2,7 @@
 		tools:locale="en">
 	<string name="app_name">Call Recorder</string>
 	<string name="menu_about">About</string>
+	<string name="menu_check_update">Check For Update</string>
 	<string name="menu_enable_record">Enable Recording</string>
 	<string name="menu_disable_record">Disable Recording</string>
 	<string name="receiver_start_call">Start record call</string>
@@ -72,6 +73,7 @@
 	<string name="welcome_title">Welcome!</string>
 	<string name="confirm">Confirm</string>
 	<string name="cancel">Cancel</string>
+	<string name="nomore">Nomore</string>
 	<string name="navigate_upwards">Navigate upwards</string>
 	<string name="selected_folder">Selected folder</string>
 	<string name="new_folder">New folder</string>
@@ -86,4 +88,14 @@
 	<string name="folder_not_empty">Folder not empty</string>
 	<string name="folder_not_empty_msg">Folder is not empty.\nAre you sure you want to use this folder?</string>
 	<string name="can_not_get_phone_number">Can not get the phone number, make sure it has the permitions !</string>
+
+	<string name="security_exception">Operate failed, please make sure it has the premitions !</string>
+
+	<string name="update_has_new_version">Found new version</string>
+	<string name="update_checking">Checking new version &#8230;&#8230;&#8230;</string>
+	<string name="update_latest">It is the latest version</string>
+	<string name="update_error">Check update error</string>
+	<string name="update_title">Version update</string>
+	<string name="update_message">Found latest version (%s), update to the lastest version now ?</string>
+
 </resources>

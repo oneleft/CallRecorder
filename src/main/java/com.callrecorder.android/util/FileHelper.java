@@ -41,7 +41,7 @@ import java.util.Date;
 import java.util.List;
 
 public class FileHelper {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	public static void logD(String tag, String msg) {
 		if (DEBUG) {
 			Log.d(tag, msg);

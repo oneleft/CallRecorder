@@ -30,4 +30,12 @@ public class Constants {
 	public static final int RECORDING_DISABLED = 5;
 
 	public static final String DefaultNumber = "1111"; // must be a number
+
+	/* Update */
+	public static final String UPDATE_CONFIG_URL = "https://raw.githubusercontent.com/jokinkuang/CallRecorder/master/update.json";
+	public static final String UPDATE_CHECK_SUCCESS = "update_check_success";
+	public static final String UPDATE_CHECK_FAILED = "update_check_failed";
+	public static final String JSON_SYNTAX_ERROR = "json_syntax_exception";
+
+
 }

@@ -34,7 +34,6 @@ import com.callrecorder.android.util.UserPreferences;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -81,13 +80,16 @@ public class SettingsActivity extends PreferenceActivity {
 
 		List<File> checkPaths = new ArrayList<>();
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			Collections.addAll(checkPaths, getExternalFilesDirs(null));
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			File extDir = getExternalFilesDir(null);
-			if (extDir != null)
-				checkPaths.add(extDir);
-		}
+		// Add the default path
+		checkPaths.add( UserPreferences.getDefaultStoragePath() );
+
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//			Collections.addAll(checkPaths, getExternalFilesDirs(null));
+//		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+//			File extDir = getExternalFilesDir(null);
+//			if (extDir != null)
+//				checkPaths.add(extDir);
+//		}
 
 		final List<File> folders = new ArrayList<>(checkPaths.size());
 

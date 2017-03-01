@@ -3,6 +3,7 @@ package com.callrecorder.android.toast;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.callrecorder.android.toast.util.DisplayUtil;
 import com.callrecorder.android.toast.util.OSJudgementUtil;
@@ -26,6 +27,18 @@ public class ToastCompat implements IToast {
 		} else {
 			mIToast = new SystemToast(context).setText(text).setDuration(duration);
 		}
+	}
+
+	public static IToast makeText(Context context, int resId) {
+		return new ToastCompat(context, context.getString(resId), Toast.LENGTH_SHORT);
+	}
+
+	public static IToast makeText(Context context, String text) {
+		return new ToastCompat(context, text, Toast.LENGTH_SHORT);
+	}
+
+	public static IToast makeText(Context context, int resId, int duration) {
+		return new ToastCompat(context, context.getString(resId), duration);
 	}
 
 	public static IToast makeText(Context context, String text, int duration) {
