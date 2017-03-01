@@ -1,30 +1,19 @@
-# Call Recorder for Android
+# 通话自动录音APP
 
-This Android application allows you to record all incoming and outgoing calls from your phone. All your recorded calls are saved in 3gp files and can be sent from the application.
+一个自动对来电、去电进行录音的APP。
 
-You can enable/disable the recording during the call, or leave it enabled to record all the calls.
+# 功能
 
-The main application screen contains a list of all calls with details of phone numbers, date and time of a call.
-Selecting one of the items will provide you with 3 options: play, send, and erase.
+* 开启/禁用自动录音功能
+* 自定义录音存储路径
+* 播放/发送/删除录音
 
-In order to enable or disable recording, select enable/disable recording from the menu.
+# 支持
 
-Your audio files are stored on internal storage, although this can be changed from the settings.
+支持Android 2.2 (API 8)以上
+测试设备：Android 4.1.2, 4.2.2, 4.4.2, 和 5.1.1
 
-The recording does not have a limit of time so be careful not to run out of space after a few long calls.
+# 注意
 
-Compatible with Android 2.2 (API 8) or above
-
-Tested on Android 4.1.2, 4.2.2, 4.4.2, and 5.1.1.
-
-Some devices with Android 4.4.2 and Android 5+ are not able to start recording
-
-Note: For some reason Android will not properly clean references to MediaRecorder, that will stop the application to use MediaRecorder again until phone is rebooted.
-
-
-# Authors
-
- * Kobi Krasnoff <krasnoff.kobi@gmail.com>
- * Raul Robledo <riul88@gmail.com>
- * ShadowNinja <shadowninja@minetest.net>
-
+1. 部分4.4.2和5.0以上的安卓设备可能无法录音，具体以实际使用为准。
+2. 如果提示录音器被占用，请确保录音器没有被别的应用占用，如果一直提示被占用，可能需要重启设备。
