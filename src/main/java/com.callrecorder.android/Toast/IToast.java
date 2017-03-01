@@ -1,4 +1,4 @@
-package com.callrecorder.android.Toast;
+package com.callrecorder.android.toast;
 
 import android.view.View;
 

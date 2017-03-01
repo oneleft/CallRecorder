@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Call recorder For Android.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.callrecorder.android;
+package com.callrecorder.android.util;
 
 import android.Manifest;
 import android.content.Context;
@@ -32,12 +32,15 @@ import android.telephony.PhoneNumberUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.entity.Recording;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-class FileHelper {
+public class FileHelper {
 	private static final boolean DEBUG = false;
 	public static void logD(String tag, String msg) {
 		if (DEBUG) {

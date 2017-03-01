@@ -19,7 +19,7 @@
     <string name="withheld_number">保留电话号码</string>
     <string name="record_enabled">通话自动录音已开启</string>
     <string name="record_disabled">通话自动录音已关闭</string>
-    <string name="no_records_message">当前没有任何通话录音.\n点击工具栏里的麦克风\"开启/关闭自动录音服务\"</string>
+    <string name="no_records_message">当前没有任何通话录音.\n自动录音服务已默认开启.\n点击工具栏里的麦克风\"开启/关闭自动录音服务\".\n</string>
     <string name="menu_delete_all">删除所有录音</string>
     <string name="dialog_delete_all_title">删除录音</string>
     <string name="dialog_delete_all_content">确认删除所有录音？</string>

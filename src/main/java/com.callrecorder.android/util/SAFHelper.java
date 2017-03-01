@@ -1,4 +1,4 @@
-package com.callrecorder.android;
+package com.callrecorder.android.util;
 
 import android.annotation.TargetApi;
 import android.content.ContentUris;

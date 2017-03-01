@@ -1,11 +1,11 @@
-package com.callrecorder.android.Toast;
+package com.callrecorder.android.toast;
 
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
 
-import com.callrecorder.android.Toast.util.DisplayUtil;
-import com.callrecorder.android.Toast.util.OSJudgementUtil;
+import com.callrecorder.android.toast.util.DisplayUtil;
+import com.callrecorder.android.toast.util.OSJudgementUtil;
 
 /**
  * @author zhitao

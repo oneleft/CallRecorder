@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Call recorder For Android.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.callrecorder.android;
+package com.callrecorder.android.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -33,10 +33,16 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.callrecorder.android.R;
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.util.FileHelper;
+import com.callrecorder.android.entity.Recording;
+import com.callrecorder.android.util.SAFHelper;
+
 import java.text.DateFormat;
 import java.util.List;
 
-class RecordingsAdapter extends ArrayAdapter<Recording> {
+public class RecordingsAdapter extends ArrayAdapter<Recording> {
 
 	private final Context context;
 	private final List<Recording> list;

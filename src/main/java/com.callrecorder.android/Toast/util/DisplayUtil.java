@@ -1,4 +1,4 @@
-package com.callrecorder.android.Toast.util;
+package com.callrecorder.android.toast.util;
 
 import android.content.Context;
 

@@ -1,4 +1,4 @@
-package com.callrecorder.android;
+package com.callrecorder.android.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,9 +9,13 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.callrecorder.android.R;
+import com.callrecorder.android.service.RecordService;
+import com.callrecorder.android.entity.Constants;
+
 import java.io.File;
 
-class UserPreferences {
+public class UserPreferences {
 	private static Context context = null;
 	private static SharedPreferences prefs = null;
 	private static Uri default_storage = null;
@@ -28,7 +32,7 @@ class UserPreferences {
 
 	private static void makeDefaultStoragePath(Context context) {
 		if (SDCardUtils.isMounted()) {
-			File storage = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+Constants.DefaultDir);
+			File storage = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+ Constants.DefaultDir);
 			SDCardUtils.ensureDirExists(storage);
 			default_storage = Uri.fromFile(storage);
 		} else {

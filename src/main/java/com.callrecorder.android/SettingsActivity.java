@@ -28,6 +28,10 @@ import android.preference.PreferenceActivity;
 import android.text.Html;
 import android.util.Log;
 
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.util.FileHelper;
+import com.callrecorder.android.util.UserPreferences;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;

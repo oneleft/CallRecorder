@@ -35,6 +35,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.entity.Recording;
+import com.callrecorder.android.util.FileHelper;
+import com.callrecorder.android.util.UserPreferences;
+import com.callrecorder.android.view.RecordingsAdapter;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;

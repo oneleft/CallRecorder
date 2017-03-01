@@ -1,4 +1,4 @@
-package com.callrecorder.android.Toast;
+package com.callrecorder.android.toast;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.callrecorder.android.Toast.util.DisplayUtil;
+import com.callrecorder.android.toast.util.DisplayUtil;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

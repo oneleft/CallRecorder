@@ -15,13 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Call recorder For Android.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.callrecorder.android;
+package com.callrecorder.android.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.util.FileHelper;
+import com.callrecorder.android.util.UserPreferences;
 
 public class PhoneReceiver extends BroadcastReceiver {
 	@Override

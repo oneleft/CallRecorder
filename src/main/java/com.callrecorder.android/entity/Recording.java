@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Call recorder For Android.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.callrecorder.android;
+package com.callrecorder.android.entity;
 
 import android.support.annotation.NonNull;
 
@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-class Recording implements Comparable<Recording> {
+public class Recording implements Comparable<Recording> {
 	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
 	private Date date = new Date();
 	private final String fileName;

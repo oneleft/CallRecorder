@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Call recorder For Android.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.callrecorder.android;
+package com.callrecorder.android.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -26,7 +26,11 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.callrecorder.android.Toast.ToastCompat;
+import com.callrecorder.android.R;
+import com.callrecorder.android.toast.ToastCompat;
+import com.callrecorder.android.entity.Constants;
+import com.callrecorder.android.util.FileHelper;
+import com.callrecorder.android.util.UserPreferences;
 
 public class RecordService extends Service {
 	private MediaRecorder recorder;
@@ -55,11 +59,13 @@ public class RecordService extends Service {
 		}
 	}
 	private RecordConfig[] configs = {
-			new RecordConfig(MediaRecorder.AudioSource.DEFAULT, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
-
 			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
 			new RecordConfig(MediaRecorder.AudioSource.MIC, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
+			new RecordConfig(MediaRecorder.AudioSource.DEFAULT, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT),
 			new RecordConfig(MediaRecorder.AudioSource.VOICE_UPLINK, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.DEFAULT), // 只录对方
+			// 为什么把DEFAULT放在下面，因为测试时，锤子手机使用VOICE_CALL正常，使用DEFAULT只能录自己；而使用小米MAX时，MIC和DEFAULT正常，而VOICE_CALL会异常。
+			// 上面的流程正好可以兼容。
+			// VOICE_UPLINK没测试。
 
 			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.THREE_GPP, MediaRecorder.AudioEncoder.DEFAULT),
 			new RecordConfig(MediaRecorder.AudioSource.VOICE_CALL, MediaRecorder.OutputFormat.DEFAULT, MediaRecorder.AudioEncoder.AMR_NB),
