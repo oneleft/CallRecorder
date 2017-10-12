@@ -27,4 +27,5 @@ Note: For some reason Android will not properly clean references to MediaRecorde
  * Kobi Krasnoff <krasnoff.kobi@gmail.com>
  * Raul Robledo <riul88@gmail.com>
  * ShadowNinja <shadowninja@minetest.net>
+ * Oneleft <oneleft.ak@gmail.com>
 
