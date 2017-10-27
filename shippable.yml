@@ -11,15 +11,16 @@ install:
     - echo "Extracting NDK (may take awhile)..."
     - ./android-ndk-r10d-linux-x86_64.bin > extract_ndk.log
     - echo "ndk.dir=`pwd`/android-ndk-r10d" >> local.properties
-    - ./gradlew clean assemble
-before_script:
     - mkdir -p shippable/testresults
     - mkdir -p shippable/apks
+    - ./gradlew clean assemble
+before_script:
+    - 
 script:
-    - ./gradlew check jacocoTestReport
+    - ./gradlew check
 after_script:
     - cp build/outputs/apk/ shippable/apks/
 notifications:
     email:
         recipients:
-            - oneleft.ak@gmail.com
+           - zach.washburn@outlook.com
